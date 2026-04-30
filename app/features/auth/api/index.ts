@@ -1,0 +1,34 @@
+import { authClient, publicClient } from "@/app/shared/api/axios/client";
+import { ApiResponse } from "@/app/shared/types";
+import { SignInResponse } from "../types";
+
+export interface SigninParams {
+  email: string;
+  password: string;
+}
+export interface SignUpParams {
+  companyName: string;
+  fullName: string;
+  email: string;
+  password: string;
+}
+export async function signIn(params: SigninParams): Promise<SignInResponse> {
+  const res = await publicClient.post<SignInResponse>(
+    `/api/auth/login`,
+    params,
+  );
+
+  return res.data;
+}
+export async function signUp(params: SignUpParams): Promise<null> {
+  const res = await publicClient.post<ApiResponse<null>>(
+    `/api/auth/signUp`,
+    params,
+  );
+
+  return res.data.data;
+}
+
+export async function signOut(): Promise<void> {
+  await authClient.post(`/api/auth/logout`);
+}

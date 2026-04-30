@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { User, LogOut, ChevronDown, Menu, X } from "lucide-react";
+import { User, ChevronDown, Menu, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import SignOutButton from "@/app/features/auth/ui/sign-out-button";
 
 const ProjectHeader = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -62,8 +63,7 @@ const ProjectHeader = () => {
               <DropdownMenuSeparator className="bg-[#f2f4f6] mx-1" />
 
               <DropdownMenuItem className="rounded-xl cursor-pointer py-3 text-[#f04452] focus:text-[#f04452] focus:bg-[#fdf2f3] mt-1">
-                <LogOut className="w-4 h-4 mr-2" />
-                <span className="text-sm font-bold">로그아웃</span>
+                <SignOutButton variant="desktop" />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -88,12 +88,7 @@ const ProjectHeader = () => {
             </span>
           </div>
           <div className="flex flex-col gap-2">
-            <Button
-              variant="ghost"
-              className="justify-start px-4 h-12 text-[#f04452] font-bold hover:bg-[#fdf2f3] rounded-xl w-full"
-            >
-              <LogOut className="w-5 h-5 mr-3" /> 로그아웃
-            </Button>
+            <SignOutButton variant="mobile" />
           </div>
         </div>
       )}

@@ -1,17 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   BarChart3,
   Database,
   Zap,
-  Layers,
-  Calculator,
   LayoutDashboard,
-  Plus,
   CheckCircle2,
   Info,
 } from "lucide-react";

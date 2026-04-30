@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Footer from "@/widgets/layouts/footer/ui/footer";
 import { Toaster } from "sonner";
+import { Providers } from "./providers";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -25,10 +26,13 @@ export default function RootLayout({
         className="min-h-screen bg-background antialiased selection:bg-blue-100 tracking-tight flex flex-col"
         suppressHydrationWarning
       >
-        <div className="flex flex-col min-h-screen bg-white text-zinc-900">
-          <main className="flex-1 flex flex-col pt-16">{children}</main>
-          <Footer />
-        </div>
+        <Providers>
+          <div className="flex flex-col min-h-screen bg-white text-zinc-900">
+            <main className="flex-1 flex flex-col pt-16">{children}</main>
+            <Footer />
+          </div>
+        </Providers>
+
         <Toaster position="top-center" richColors />
       </body>
     </html>

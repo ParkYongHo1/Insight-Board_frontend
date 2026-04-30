@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   User,
-  LogOut,
   ChevronDown,
   Menu,
   X,
@@ -21,14 +20,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/app/store/session";
+import SignOutButton from "@/app/features/auth/ui/sign-out-button";
 
 const UserHeader = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const user = {
-    name: "박용호",
-    companyName: "(주)인사이트테크",
-  };
+  const user = useUser();
+  if (!user) return null;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#eff1f3]">
@@ -105,9 +103,8 @@ const UserHeader = () => {
                 </Link>
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="rounded-xl cursor-pointer py-3 text-[#f04452] focus:text-[#f04452] focus:bg-[#fdf2f3]">
-                <LogOut className="w-4 h-4 mr-2" />
-                <span className="text-sm font-bold">로그아웃</span>
+              <DropdownMenuItem>
+                <SignOutButton variant="desktop" />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -160,9 +157,6 @@ const UserHeader = () => {
                 </div>
               </div>
             </Link>
-
-            <div className="h-px bg-[#eff1f3] my-3 mx-2" />
-
             <Link href="/profile" className="w-full">
               <div className="flex items-center px-4 h-14 text-[#4e5968] font-bold hover:bg-[#f2f4f6] rounded-2xl transition-all active:scale-[0.98]">
                 <div className="flex items-center justify-center w-10 h-10 mr-4 text-[#8b95a1] shrink-0">
@@ -171,15 +165,9 @@ const UserHeader = () => {
                 <span className="text-[15px]">계정 설정</span>
               </div>
             </Link>
+            <div className="h-px bg-[#eff1f3] my-3 mx-2" />
 
-            <Button variant="ghost" className="w-full text-left">
-              <div className="flex items-center px-4 h-14 text-[#f04452] font-bold hover:bg-[#fdf2f3] rounded-2xl transition-all active:scale-[0.98]">
-                <div className="flex items-center justify-center w-10 h-10 mr-4 shrink-0">
-                  <LogOut className="w-5 h-5" />
-                </div>
-                <span className="text-[15px]">로그아웃</span>
-              </div>
-            </Button>
+            <SignOutButton variant="mobile" />
           </div>
         </div>
       )}

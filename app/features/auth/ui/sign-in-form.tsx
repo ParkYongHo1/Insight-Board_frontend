@@ -7,15 +7,53 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useSignIn } from "../hooks/use-sign-in";
+import { useRouter } from "next/navigation";
 
 const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
+  const { mutate: signIn, isPending } = useSignIn({
+    onSuccess: (data) => {
+      const { name } = data;
+      toast.success(`${name}님 반갑습니다!`, {
+        position: "top-center",
+      });
 
+      router.push("/");
+    },
+    onError: (error) => {
+      console.log(error);
+
+      toast.error(error.response?.data?.message || "로그인에 실패했습니다.", {
+        position: "top-center",
+      });
+      setEmail("");
+      setPassword("");
+    },
+  });
   const handleSignInClick = () => {
-    // TODO: 로그인 로직 구현
+    if (!email.trim() || !password.trim()) {
+      toast.warning("정보를 모두 입력해주세요.");
+      return;
+    }
+    signIn({ email, password });
+  };
+  const handleDemoSignIn = () => {
+    const demoData = {
+      email: "admin@test.com",
+      password: "password1234",
+    };
+
+    // 입력창 시각적 피드백 (선택 사항)
+    setEmail(demoData.email);
+    setPassword(demoData.password);
+
+    // 즉시 로그인 요청
+    signIn(demoData);
   };
   return (
     <div className="w-full max-w-md space-y-8 bg-white p-2">
@@ -109,6 +147,7 @@ const SignInForm = () => {
 
       <div className="space-y-4 text-center">
         <Button
+          onClick={handleDemoSignIn}
           variant="link"
           className="group mx-auto h-auto p-0 text-sm text-zinc-400 hover:text-blue-500 no-underline hover:no-underline cursor-pointer"
         >
