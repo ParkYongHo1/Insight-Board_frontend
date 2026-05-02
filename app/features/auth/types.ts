@@ -1,11 +1,4 @@
-import { AxiosError } from "axios";
-
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  role: "ADMIN" | "VIEWER";
-}
+import { Project } from "@/app/store/session";
 
 export interface LoginData {
   accessToken: string;
@@ -24,10 +17,3 @@ export interface SignInResponse {
   companyName: string;
   projectList: Project[];
 }
-export interface ApiErrorResponse {
-  message: string;
-  error?: string;
-  statusCode?: number;
-}
-
-export type ApiError = AxiosError<ApiErrorResponse>;

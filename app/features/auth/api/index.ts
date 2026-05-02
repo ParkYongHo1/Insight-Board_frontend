@@ -7,9 +7,8 @@ export interface SigninParams {
   password: string;
 }
 export interface SignUpParams {
-  companyName: string;
-  fullName: string;
-  email: string;
+  token: string;
+  name: string;
   password: string;
 }
 export async function signIn(params: SigninParams): Promise<SignInResponse> {
@@ -20,13 +19,9 @@ export async function signIn(params: SigninParams): Promise<SignInResponse> {
 
   return res.data;
 }
-export async function signUp(params: SignUpParams): Promise<null> {
-  const res = await publicClient.post<ApiResponse<null>>(
-    `/api/auth/signUp`,
-    params,
-  );
-
-  return res.data.data;
+export async function signUp(params: SignUpParams): Promise<SignInResponse> {
+  const res = await publicClient.post(`/api/auth/register`, params);
+  return res.data;
 }
 
 export async function signOut(): Promise<void> {

@@ -23,7 +23,7 @@ const SignInForm = () => {
         position: "top-center",
       });
 
-      router.push("/");
+      router.push("/project-selection");
     },
     onError: (error) => {
       console.log(error);
@@ -48,11 +48,6 @@ const SignInForm = () => {
       password: "password1234",
     };
 
-    // 입력창 시각적 피드백 (선택 사항)
-    setEmail(demoData.email);
-    setPassword(demoData.password);
-
-    // 즉시 로그인 요청
     signIn(demoData);
   };
   return (

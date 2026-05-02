@@ -1,5 +1,4 @@
-import { UseMutationCallbacks } from "@/app/shared/types";
-import { ApiError } from "../types";
+import { ApiError, UseMutationCallbacks } from "@/app/shared/types";
 import { useMutation } from "@tanstack/react-query";
 import { signOut } from "../api";
 import useUserStore from "@/app/store/session";

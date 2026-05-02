@@ -12,14 +12,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import SignOutButton from "@/app/features/auth/ui/sign-out-button";
+import { useUser } from "@/app/store/session";
 
 const ProjectHeader = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const user = {
-    name: "박용호",
-    companyName: "현대캐피탈",
-  };
+  const user = useUser();
+  if (!user) return null;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#eff1f3]">

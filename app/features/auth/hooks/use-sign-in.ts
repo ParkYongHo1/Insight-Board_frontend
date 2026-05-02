@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { signIn, SigninParams } from "../api";
-import useUserStore, { useAuthActions } from "@/app/store/session";
-import { UseMutationCallbacks } from "@/app/shared/types";
-import { ApiError, SignInResponse } from "../types";
+import { useAuthActions } from "@/app/store/session";
+import { ApiError, UseMutationCallbacks } from "@/app/shared/types";
+import { SignInResponse } from "../types";
 
 export function useSignIn(
   callbacks?: UseMutationCallbacks<SignInResponse, ApiError>,
