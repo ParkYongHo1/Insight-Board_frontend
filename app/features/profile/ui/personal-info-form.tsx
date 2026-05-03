@@ -1,17 +1,22 @@
-import { useUser } from "@/app/store/session";
+"use client";
+
+import useUserStore, { useUser } from "@/app/store/session";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import ProfileInput from "@/widgets/profile/ui/profile-input";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import { useUpdateName } from "../hooks/use-update-name";
+import { useUpdatePassword } from "../hooks/use-update-password";
+import { Eye, EyeOff } from "lucide-react";
 
 const PersonalInfoForm = () => {
   const user = useUser();
 
-  const [userName, setUserName] = useState(user?.name || "");
-  const [passwords, setPasswords] = useState({
-    new: "",
-    confirm: "",
-  });
+  const [userName, setUserName] = useState(user?.name ?? "");
+  const [passwords, setPasswords] = useState({ new: "", confirm: "" });
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const passwordError = useMemo(() => {
     if (passwords.confirm && passwords.new !== passwords.confirm) {
@@ -19,9 +24,41 @@ const PersonalInfoForm = () => {
     }
     return "";
   }, [passwords.new, passwords.confirm]);
-  if (!user) {
-    return null;
-  }
+
+  const { mutate: updateName, isPending: isPendingName } = useUpdateName({
+    onSuccess: (data) => {
+      const currentUser = useUserStore.getState().user;
+      if (currentUser) {
+        useUserStore.getState().setSession({
+          user: { ...currentUser, name: data.name },
+          accessToken: useUserStore.getState().accessToken!,
+          accessTokenExpiresAt: useUserStore.getState().accessTokenExpiresAt!,
+        });
+      }
+      toast.success("이름이 변경되었습니다.", { position: "top-center" });
+    },
+    onError: (error) => {
+      toast.error(error?.message || "이름 변경에 실패했습니다.", {
+        position: "top-center",
+      });
+    },
+  });
+
+  const { mutate: updatePassword, isPending: isPendingPassword } =
+    useUpdatePassword({
+      onSuccess: () => {
+        setPasswords({ new: "", confirm: "" });
+        toast.success("비밀번호가 변경되었습니다.", { position: "top-center" });
+      },
+      onError: (error) => {
+        toast.error(error?.message || "비밀번호 변경에 실패했습니다.", {
+          position: "top-center",
+        });
+      },
+    });
+
+  if (!user) return null;
+
   return (
     <section className="space-y-10">
       <h2 className="text-2xl font-bold border-b pb-6 text-[#191f28]">
@@ -61,8 +98,12 @@ const PersonalInfoForm = () => {
             onChange={(e) => setUserName(e.target.value)}
           />
         </div>
-        <Button className="md:col-span-2 h-14 bg-[#191f28] hover:bg-black text-white rounded-2xl font-bold transition-all">
-          변경
+        <Button
+          onClick={() => updateName(userName)}
+          disabled={isPendingName || !userName.trim() || userName === user.name}
+          className="md:col-span-2 h-14 bg-[#191f28] hover:bg-black text-white rounded-2xl font-bold transition-all disabled:opacity-50"
+        >
+          {isPendingName ? "변경 중..." : "변경"}
         </Button>
       </div>
 
@@ -71,28 +112,71 @@ const PersonalInfoForm = () => {
           비밀번호
         </div>
         <div className="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ProfileInput
-            id="new"
-            label="새 비밀번호"
-            type="password"
-            value={passwords.new}
-            onChange={(e) =>
-              setPasswords({ ...passwords, new: e.target.value })
-            }
-          />
-          <ProfileInput
-            id="conf"
-            label="비밀번호 확인"
-            type="password"
-            value={passwords.confirm}
-            error={passwordError}
-            onChange={(e) =>
-              setPasswords({ ...passwords, confirm: e.target.value })
-            }
-          />
+          <div className="relative">
+            <ProfileInput
+              id="new"
+              label="새 비밀번호"
+              type={showNewPassword ? "text" : "password"}
+              value={passwords.new}
+              onChange={(e) =>
+                setPasswords({ ...passwords, new: e.target.value })
+              }
+            />
+            {passwords.new && (
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
+                tabIndex={-1}
+              >
+                {showNewPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            )}
+          </div>
+          <div className="relative">
+            <ProfileInput
+              id="conf"
+              label="비밀번호 확인"
+              type={showConfirmPassword ? "text" : "password"}
+              value={passwords.confirm}
+              error={passwordError}
+              onChange={(e) =>
+                setPasswords({ ...passwords, confirm: e.target.value })
+              }
+            />
+            {passwords.confirm && (
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
+                tabIndex={-1}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            )}
+          </div>
         </div>
         <Button
-          disabled={!!passwordError || !passwords.new || !passwords.confirm}
+          onClick={() =>
+            updatePassword({
+              newPassword: passwords.new,
+              confirmPassword: passwords.confirm,
+            })
+          }
+          disabled={
+            isPendingPassword ||
+            !!passwordError ||
+            !passwords.new ||
+            !passwords.confirm
+          }
           className={cn(
             "md:col-span-2 h-14 rounded-2xl font-bold transition-all",
             passwordError || !passwords.new
@@ -100,10 +184,11 @@ const PersonalInfoForm = () => {
               : "bg-[#3182f6] hover:bg-[#1b64da] text-white",
           )}
         >
-          저장
+          {isPendingPassword ? "저장 중..." : "저장"}
         </Button>
       </div>
     </section>
   );
 };
+
 export default PersonalInfoForm;

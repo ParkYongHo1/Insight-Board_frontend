@@ -2,7 +2,6 @@
 
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import Cookies from "js-cookie";
 
 export interface Project {
   id: string;
@@ -48,12 +47,7 @@ const useUserStore = create<UserState>()(
         selectedProjectId: null,
 
         setSession: ({ user, accessToken, accessTokenExpiresAt }) =>
-          set({
-            user,
-            accessToken,
-            accessTokenExpiresAt,
-            isLoaded: true,
-          }),
+          set({ user, accessToken, accessTokenExpiresAt, isLoaded: true }),
 
         updateToken: (accessToken, accessTokenExpiresAt) =>
           set((state) => ({ ...state, accessToken, accessTokenExpiresAt })),
@@ -62,17 +56,11 @@ const useUserStore = create<UserState>()(
 
         setSelectedProject: (projectId: string) => {
           set({ selectedProjectId: projectId });
-
-          Cookies.set("selectedProjectId", projectId, {
-            expires: 7,
-            path: "/",
-            sameSite: "lax",
-          });
+          document.cookie = `selectedProjectId=${projectId}; path=/; max-age=${7 * 24 * 60 * 60}`;
         },
 
         clearSession: () => {
-          Cookies.remove("selectedProjectId");
-
+          document.cookie = "selectedProjectId=; path=/; max-age=0";
           set({
             user: null,
             accessToken: null,
@@ -93,13 +81,6 @@ const useUserStore = create<UserState>()(
         onRehydrateStorage: () => (state) => {
           if (state) {
             state.setLoaded();
-
-            if (state.selectedProjectId) {
-              Cookies.set("selectedProjectId", state.selectedProjectId, {
-                expires: 7,
-                path: "/",
-              });
-            }
           }
         },
       },
