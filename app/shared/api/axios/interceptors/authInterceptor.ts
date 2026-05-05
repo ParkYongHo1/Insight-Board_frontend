@@ -6,7 +6,6 @@ import { ApiResponse } from "@/app/shared/types";
 authClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const { accessToken } = useUserStore.getState();
-    console.log(accessToken);
 
     if (!accessToken) {
       return Promise.reject(new Error("액세스 토큰이 없습니다."));

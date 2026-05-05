@@ -20,7 +20,6 @@ export function SignUpForm() {
     ? (JSON.parse(atob(token.split(".")[1])) as { email: string })
     : null;
   const invitedEmail = tokenPayload?.email ?? "";
-  console.log(tokenPayload);
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);

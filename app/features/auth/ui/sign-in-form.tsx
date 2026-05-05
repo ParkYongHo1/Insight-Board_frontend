@@ -26,8 +26,6 @@ const SignInForm = () => {
       router.push("/project-selection");
     },
     onError: (error) => {
-      console.log(error);
-
       toast.error(error.response?.data?.message || "로그인에 실패했습니다.", {
         position: "top-center",
       });
