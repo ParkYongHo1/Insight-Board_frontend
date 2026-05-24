@@ -1,27 +1,41 @@
+export interface DashboardItemDetail {
+  alias: string;
+}
+
+export interface DashboardDto {
+  id: number;
+  title: string;
+  desc?: string;
+  author: string;
+  createdAt: string;
+  groups: DashboardItemDetail[];
+  metrics: DashboardItemDetail[];
+}
+
 export interface Metric {
+  id: string;
+  dbCol: string;
+  alias: string;
+}
+export interface Group {
   id: string;
   dbCol: string;
   actualValue: string;
   alias: string;
 }
 
-export interface Group {
+export type RawDataItem = Record<string, string | number>;
+
+export interface ChartData {
   id: string;
-  dbCol: string;
-  type: string;
-  cond: string;
-  value: string;
-  statType: string;
-  alias: string;
+  label: string;
+  value: number;
+  color?: string;
 }
 
-export interface DashboardData {
-  title?: string;
-  desc?: string;
-  metrics?: Metric[];
-  groups?: Group[];
-}
+export interface SocketResponse {
+  groupData: ChartData[];
+  metricData: ChartData[];
 
-export interface DashboardFormProps {
-  initialData?: DashboardData;
+  tableData: RawDataItem[];
 }
