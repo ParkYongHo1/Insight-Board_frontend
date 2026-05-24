@@ -4,6 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* @theme inline 구조를 완벽히 유지하여 기존 Shadcn UI가 틀어지는 것을 방지합니다 */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -46,6 +47,42 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* ==========================================
+     [v4 버그 픽스] inline 테마 지정 시 유실되는 핵심 유틸리티 컬러 강제 주입
+     ========================================== */
+  /* Green / Emerald (가이드 시스템 및 상승 지표용) */
+  --color-green-50: #f0fdf4;
+  --color-green-100: #dcfce7;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+
+  /* Blue / Zinc (기존 대시보드 및 포인트 텍스트 백업) */
+  --color-blue-50: #eff6ff;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-zinc-50: #f9f9fb;
+  --color-zinc-100: #f4f4f5;
+  --color-zinc-400: #a1a1aa;
+  --color-zinc-500: #71717a;
+  --color-zinc-900: #18181b;
+  --color-zinc-950: #09090b;
+
+  /* Orange / Purple / Amber / Red (배점 구조 및 알림 단계 피드백용) */
+  --color-orange-500: #f97316;
+  --color-purple-500: #a855f7;
+  --color-pink-500: #ec4899;
+  --color-amber-50: #fffbeb;
+  --color-amber-100: #fef3c7;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+  --color-amber-700: #b45309;
+  --color-amber-800: #92400e;
+  --color-red-50: #fef2f2;
+  --color-red-500: #ef4444;
 }
 
 :root {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Loader2, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 
@@ -13,35 +13,34 @@ import { useSignUp } from "../hooks/use-sign-up";
 
 export function SignUpForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token") ?? "";
 
-  const tokenPayload = token
-    ? (JSON.parse(atob(token.split(".")[1])) as { email: string })
-    : null;
-  const invitedEmail = tokenPayload?.email ?? "";
+  const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [password, setPassword] = useState("");
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [password, setPassword] = useState("");
 
   const { mutate: signUp, isPending } = useSignUp({
     onSuccess: () => {
       toast.success("회원가입이 완료되었습니다!", {
         position: "top-center",
       });
-      router.push("/project-selection");
+      router.push("/dashboards");
     },
     onError: (error) => {
-      toast.error(error.message, { position: "top-center" });
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "회원가입에 실패했습니다.",
+        { position: "top-center" },
+      );
       setPassword("");
-      setFullName("");
     },
   });
 
   const handleSignUpClick = () => {
-    if (!fullName.trim() || !password.trim()) {
+    if (!email.trim() || !fullName.trim() || !password.trim()) {
       toast.warning("모든 정보를 입력해주세요.");
       return;
     }
@@ -49,31 +48,30 @@ export function SignUpForm() {
       toast.warning("비밀번호는 8자리 이상이어야 합니다.");
       return;
     }
-    if (!token) {
-      toast.error("유효하지 않은 초대 링크입니다.");
-      return;
-    }
 
-    signUp({ token, name: fullName, password });
+    signUp({
+      email: email.trim(),
+      name: fullName.trim(),
+      password: password.trim(),
+    });
   };
 
   const inputClassName =
-    "h-14 px-5 py-4 transition-all duration-200 border-zinc-200";
+    "h-14 px-5 py-4 transition-all duration-200 border-zinc-200 w-full";
   const focusedInputClassName = "border-blue-500 ring-1 ring-blue-500/10";
   const labelClassName =
-    "absolute left-5 px-1 transition-all duration-200 pointer-events-none bg-white font-normal";
+    "absolute left-5 px-1 transition-all duration-200 pointer-events-none bg-white font-normal z-10";
   const focusedLabelClassName =
     "top-0 -translate-y-1/2 text-xs text-blue-500 font-medium";
   const defaultLabelClassName =
     "top-1/2 -translate-y-1/2 text-zinc-400 text-sm";
 
   const renderField = (
-    id: "fullName" | "email" | "password",
+    id: "email" | "fullName" | "password",
     label: string,
     type: string,
     value: string,
     setter: (val: string) => void,
-    disabled = false,
   ) => {
     const isPassword = id === "password";
     const isFocused = focusedField === id;
@@ -88,12 +86,11 @@ export function SignUpForm() {
           onFocus={() => setFocusedField(id)}
           onBlur={() => setFocusedField(null)}
           required
-          disabled={isPending || disabled}
+          disabled={isPending}
           className={cn(
             inputClassName,
-            isFocused && !disabled && focusedInputClassName,
+            isFocused && focusedInputClassName,
             isPassword && "pr-12",
-            disabled && "bg-[#f2f4f6] cursor-not-allowed text-[#8b95a1]",
           )}
         />
         <Label
@@ -131,19 +128,12 @@ export function SignUpForm() {
           Insight Board
         </h1>
         <p className="text-sm text-zinc-500">
-          초대받은 이메일로 가입을 완료하세요.
+          계정을 생성하고 나만의 맞춤형 통계 대시보드를 만나보세요.
         </p>
       </div>
 
       <div className="space-y-5">
-        {renderField(
-          "email",
-          "이메일 주소",
-          "email",
-          invitedEmail,
-          () => {},
-          true,
-        )}
+        {renderField("email", "이메일 주소", "email", email, setEmail)}
         {renderField("fullName", "이름", "text", fullName, setFullName)}
         {renderField(
           "password",
@@ -156,13 +146,13 @@ export function SignUpForm() {
         <Button
           onClick={handleSignUpClick}
           disabled={isPending}
-          className="w-full h-14 bg-black hover:bg-zinc-800 text-white rounded-lg group transition-all mt-2"
+          className="w-full h-14 bg-black hover:bg-zinc-800 text-white rounded-lg group transition-all mt-2 cursor-pointer"
         >
           {isPending ? (
             <Loader2 className="w-5 h-5 animate-spin" />
           ) : (
             <div className="flex items-center justify-center gap-2 font-semibold text-base">
-              <span>가입 완료하기</span>
+              <span>계정 생성 및 시작하기</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </div>
           )}

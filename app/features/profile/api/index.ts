@@ -1,45 +1,13 @@
 import { authClient } from "@/app/shared/api/axios/client";
 
-export interface TeamMember {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: "ACTIVE" | "PENDING";
+export interface UpdateThemeResponse {
+  message: string;
+  interestTheme: string;
 }
 
-export interface InviteMemberParams {
-  email: string;
-  role: string;
-  projectId?: number;
-}
-export async function getProjectMembers(
-  projectId: string,
-): Promise<TeamMember[]> {
-  const res = await authClient.get(`/api/project/${projectId}/members`);
-  return res.data as TeamMember[];
-}
-
-export async function inviteMember(
-  params: InviteMemberParams[],
-): Promise<void> {
-  await authClient.post("/api/auth/invite", params, { timeout: 30000 });
-}
-
-export async function patchMemberRole({
-  memberId,
-  newRole,
-}: {
-  memberId: number;
-  newRole: string;
-}): Promise<void> {
-  await authClient.patch(`/api/user/${memberId}/role`, { role: newRole });
-}
-
-export async function removeMember(memberId: number): Promise<void> {
-  await authClient.delete(`/api/user/${memberId}`);
-}
-
+/**
+ * 1. 유저 이름 변경 API
+ */
 export async function updateName(
   name: string,
 ): Promise<{ message: string; name: string }> {
@@ -47,6 +15,9 @@ export async function updateName(
   return res.data as { message: string; name: string };
 }
 
+/**
+ * 2. 유저 비밀번호 변경 API
+ */
 export async function updatePassword(
   newPassword: string,
   confirmPassword: string,
@@ -56,4 +27,16 @@ export async function updatePassword(
     confirmPassword,
   });
   return res.data as { message: string };
+}
+
+/**
+ * 3. 유저 관심 분석 테마 변경 API (새로 추가)
+ */
+export async function updateTheme(
+  interestTheme: string,
+): Promise<UpdateThemeResponse> {
+  const res = await authClient.patch<UpdateThemeResponse>("/api/user/theme", {
+    interestTheme,
+  });
+  return res.data;
 }

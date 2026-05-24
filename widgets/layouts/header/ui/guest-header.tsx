@@ -11,6 +11,12 @@ const GuestHeader = () => {
         >
           Insight Board
         </Link>
+        <Link
+          href="/guide"
+          className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
+        >
+          용어 가이드
+        </Link>
         <div className="flex items-center gap-6">
           <Button
             asChild

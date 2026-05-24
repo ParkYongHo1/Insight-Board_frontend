@@ -13,12 +13,11 @@ export function useSignUp(
       const { accessToken, accessTokenExpiresAt, ...user } = data;
 
       useUserStore.getState().clearSession();
+
       useUserStore.getState().setSession({
         user: {
           email: user.email,
           name: user.name,
-          companyName: user.companyName,
-          projectList: user.projectList,
         },
         accessToken,
         accessTokenExpiresAt,

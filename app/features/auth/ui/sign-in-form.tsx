@@ -23,7 +23,7 @@ const SignInForm = () => {
         position: "top-center",
       });
 
-      router.push("/project-selection");
+      router.push("/");
     },
     onError: (error) => {
       toast.error(error.response?.data?.message || "로그인에 실패했습니다.", {
@@ -33,6 +33,7 @@ const SignInForm = () => {
       setPassword("");
     },
   });
+
   const handleSignInClick = () => {
     if (!email.trim() || !password.trim()) {
       toast.warning("정보를 모두 입력해주세요.");
@@ -40,6 +41,7 @@ const SignInForm = () => {
     }
     signIn({ email, password });
   };
+
   const handleDemoSignIn = () => {
     const demoData = {
       email: "admin@test.com",
@@ -48,6 +50,7 @@ const SignInForm = () => {
 
     signIn(demoData);
   };
+
   return (
     <div className="w-full max-w-md space-y-8 bg-white p-2">
       <div className="text-center space-y-2">
@@ -138,15 +141,33 @@ const SignInForm = () => {
         </Button>
       </div>
 
-      <div className="space-y-4 text-center">
+      {/* 🚀 하단 링크 영역 고도화 */}
+      <div className="space-y-5 text-center pt-2">
         <Button
           onClick={handleDemoSignIn}
           variant="link"
-          className="group mx-auto h-auto p-0 text-sm text-zinc-400 hover:text-blue-500 no-underline hover:no-underline cursor-pointer"
+          className="group mx-auto h-auto p-0 text-sm text-zinc-500 hover:text-zinc-900 no-underline hover:no-underline cursor-pointer"
         >
           <span>데모버전 로그인</span>
           <ArrowRight className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" />
         </Button>
+
+        {/* 얇은 시각적 구분선 */}
+        <div className="relative flex items-center justify-center">
+          <div className="absolute w-full border-t border-zinc-100"></div>
+          <span className="relative bg-white px-3 text-[11px] font-bold text-zinc-300 uppercase tracking-wider">
+            OR
+          </span>
+        </div>
+
+        <div className="text-xs text-zinc-400 flex flex-col items-center gap-1.5">
+          <Link
+            href="/sign-up"
+            className="group inline-flex items-center gap-1 text-blue-600 font-semibold hover:text-blue-700 hover:underline transition-colors cursor-pointer"
+          >
+            <span>회원가입하기</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

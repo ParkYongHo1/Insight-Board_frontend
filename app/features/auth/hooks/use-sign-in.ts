@@ -7,23 +7,24 @@ import { SignInResponse } from "../types";
 export function useSignIn(
   callbacks?: UseMutationCallbacks<SignInResponse, ApiError>,
 ) {
-  const { setSession } = useAuthActions();
+  const { setSession, clearSession } = useAuthActions();
 
   return useMutation<SignInResponse, ApiError, SigninParams>({
     mutationFn: signIn,
     onSuccess: (data: SignInResponse) => {
       const { accessToken, accessTokenExpiresAt, ...user } = data;
 
+      clearSession();
+
       setSession({
         user: {
           email: user.email,
           name: user.name,
-          companyName: user.companyName,
-          projectList: user.projectList,
         },
         accessToken,
         accessTokenExpiresAt,
       });
+
       callbacks?.onSuccess?.(data);
     },
     onError: (error) => {

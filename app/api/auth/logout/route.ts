@@ -9,9 +9,5 @@ export async function POST() {
     path: "/",
     maxAge: 0,
   });
-  res.cookies.set("selectedProjectId", "", {
-    path: "/",
-    maxAge: 0,
-  });
   return res;
 }

@@ -3,19 +3,9 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  role: "ADMIN" | "VIEWER";
-  createdAt: string;
-}
-
 export interface User {
   email: string;
   name: string;
-  companyName: string;
-  projectList: Project[];
 }
 
 interface UserState {
@@ -23,7 +13,6 @@ interface UserState {
   user: User | null;
   accessToken: string | null;
   accessTokenExpiresAt: string | null;
-  selectedProjectId: string | null;
 
   setSession: (loginData: {
     user: User;
@@ -33,7 +22,6 @@ interface UserState {
   updateToken: (accessToken: string, accessTokenExpiresAt: string) => void;
   setLoaded: () => void;
   clearSession: () => void;
-  setSelectedProject: (projectId: string) => void;
 }
 
 const useUserStore = create<UserState>()(
@@ -44,7 +32,6 @@ const useUserStore = create<UserState>()(
         user: null,
         accessToken: null,
         accessTokenExpiresAt: null,
-        selectedProjectId: null,
 
         setSession: ({ user, accessToken, accessTokenExpiresAt }) =>
           set({ user, accessToken, accessTokenExpiresAt, isLoaded: true }),
@@ -54,18 +41,11 @@ const useUserStore = create<UserState>()(
 
         setLoaded: () => set({ isLoaded: true }),
 
-        setSelectedProject: (projectId: string) => {
-          set({ selectedProjectId: projectId });
-          document.cookie = `selectedProjectId=${projectId}; path=/; max-age=${7 * 24 * 60 * 60}`;
-        },
-
         clearSession: () => {
-          document.cookie = "selectedProjectId=; path=/; max-age=0";
           set({
             user: null,
             accessToken: null,
             accessTokenExpiresAt: null,
-            selectedProjectId: null,
             isLoaded: true,
           });
         },
@@ -76,7 +56,6 @@ const useUserStore = create<UserState>()(
           user: state.user,
           accessToken: state.accessToken,
           accessTokenExpiresAt: state.accessTokenExpiresAt,
-          selectedProjectId: state.selectedProjectId,
         }),
         onRehydrateStorage: () => (state) => {
           if (state) {
@@ -93,24 +72,15 @@ export const useUser = () => useUserStore((state) => state.user);
 export const useAccessToken = () => useUserStore((state) => state.accessToken);
 export const useIsLoggedIn = () => useUserStore((state) => !!state.user);
 export const useIsSessionLoaded = () => useUserStore((state) => state.isLoaded);
-export const useSelectedProjectId = () =>
-  useUserStore((state) => state.selectedProjectId);
 
 export const useAuthActions = () => {
-  const {
-    setSession,
-    updateToken,
-    clearSession,
-    setLoaded,
-    setSelectedProject,
-  } = useUserStore();
+  const { setSession, updateToken, clearSession, setLoaded } = useUserStore();
 
   return {
     setSession,
     updateToken,
     clearSession,
     setLoaded,
-    setSelectedProject,
   };
 };
 

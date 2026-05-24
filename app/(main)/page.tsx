@@ -5,13 +5,14 @@ import { motion } from "framer-motion";
 import {
   ArrowRight,
   BarChart3,
-  Database,
+  TrendingUp,
   Zap,
   LayoutDashboard,
   CheckCircle2,
-  Info,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const fadeInUp = (delay: number = 0) => ({
   initial: { opacity: 0, y: 20 },
@@ -25,18 +26,18 @@ const HeroSection = () => (
     <div className="max-w-7xl mx-auto px-6 text-center">
       <motion.div {...fadeInUp(0)}>
         <h1 className="text-5xl md:text-[84px] font-extrabold tracking-tighter leading-[1.05] text-zinc-950">
-          흩어진 데이터가
+          흩어진 주식 데이터가
           <br />
-          <span className="text-blue-600">성장의 인사이트로</span>
+          <span className="text-blue-600">매수 인사이트로</span>
         </h1>
       </motion.div>
       <motion.p
         {...fadeInUp(0.15)}
         className="mt-10 text-xl md:text-2xl text-zinc-500 max-w-2xl mx-auto font-medium leading-relaxed"
       >
-        복잡한 데이터베이스 연결부터 실시간 시각화까지
+        이동평균, RSI, 애널리스트 추천, 모멘텀까지
         <br className="hidden md:block" />
-        당신의 Raw 데이터를 한눈에 바로 보세요
+        원하는 종목의 매수매력도를 실시간으로 확인하세요
       </motion.p>
       <motion.div {...fadeInUp(0.3)} className="mt-14">
         <Button
@@ -54,37 +55,33 @@ const HeroSection = () => (
   </section>
 );
 
-// ✅ 핵심: 설정 미리보기 섹션 (이미지 image_89dcc0.png 컨셉 반영)
 const PreviewSection = () => {
   return (
     <section className="py-24 bg-zinc-50 border-y border-zinc-100">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* 왼쪽: 설명 영역 */}
           <motion.div {...fadeInUp(0)}>
             <span className="text-blue-600 font-bold text-sm tracking-widest uppercase bg-blue-50 px-3 py-1 rounded-full">
               Preview
             </span>
             <h2 className="mt-6 text-4xl font-black tracking-tight text-zinc-950 leading-tight">
-              클릭 몇 번으로 완성되는
+              매수 타이밍을 놓치지 않도록
               <br />
-              커스텀 통계 환경
+              Slack으로 즉시 알림을
             </h2>
             <p className="mt-6 text-lg text-zinc-500 font-medium leading-relaxed">
-              복잡한 SQL 쿼리 없이도 드롭다운 선택만으로 원하는 데이터를
-              그룹화하고 집계할 수 있습니다. 설정 즉시 반영되는 인터페이스를
-              경험해보세요.
+              매수매력도가 설정한 기준점을 넘으면 연동된 Slack으로 즉시 알림을
+              보냅니다. 기술적 분석 지표를 한눈에 확인하세요.
             </p>
-
             <div className="mt-10 space-y-4">
               {[
                 {
-                  title: "유연한 그룹핑",
-                  desc: "모델별, 서비스별, 날짜별 자유로운 기준 설정",
+                  title: "퀀트 기반 매수매력도",
+                  desc: "MA, RSI, 골든크로스, 애널리스트, 모멘텀을 종합한 100점 스코어",
                 },
                 {
-                  title: "지능형 집계",
-                  desc: "토큰 수, 소요 시간 등 핵심 지표 자동 계산",
+                  title: "Slack 실시간 알림",
+                  desc: "설정한 점수 초과 시 Slack으로 즉시 매수 신호 알림",
                 },
               ].map((item, i) => (
                 <div key={i} className="flex gap-4 items-start">
@@ -100,74 +97,93 @@ const PreviewSection = () => {
             </div>
           </motion.div>
 
-          {/* 오른쪽: 실제 UI 미리보기 (image_89dcc0.png 스타일) */}
+          {/* Slack 알림 UI */}
           <motion.div
             {...fadeInUp(0.2)}
-            className="relative bg-white rounded-[32px] p-8 shadow-2xl border border-zinc-100 overflow-hidden"
+            className="bg-white rounded-[32px] p-6 shadow-2xl border border-zinc-100"
           >
-            {/* Header Mockup */}
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 bg-zinc-900 rounded-xl flex items-center justify-center">
-                <LayoutDashboard className="w-5 h-5 text-white" />
+            {/* Slack 헤더 */}
+            <div className="flex items-center gap-3 pb-4 border-b border-zinc-100 mb-4">
+              <div className="w-9 h-9 bg-[#4A154B] rounded-lg flex items-center justify-center shrink-0">
+                <Image
+                  src="/slack.svg"
+                  alt="Slack Logo"
+                  width={16}
+                  height={16}
+                  className="w-4 h-4"
+                />
               </div>
-              <h3 className="text-xl font-black text-zinc-950">
-                [OB] 카디프생명
-              </h3>
+              <div>
+                <p className="text-sm font-bold text-zinc-900">Insight Board</p>
+              </div>
             </div>
 
-            {/* Info Box */}
-            <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex gap-3 mb-8">
-              <Info className="w-5 h-5 text-blue-500 shrink-0" />
-              <p className="text-[13px] text-blue-800 font-medium leading-snug">
-                카디프생명 ESD 모델별 응답 토큰 및 소요시간 이상치 실시간 탐지
-                대시보드
+            {/* 알림 본문 */}
+            <div className="border-l-4 border-blue-500 pl-4">
+              <p className="text-sm font-bold text-zinc-900 mb-1">
+                📈 PL 매수매력도 알림
+              </p>
+              <p className="text-sm text-zinc-600 mb-5">
+                <span className="font-bold">PL</span> 의 매수매력도가{" "}
+                <span className="font-black text-blue-600">76점</span>에
+                도달했습니다!
+              </p>
+
+              {/* 지표 - 2컬럼 */}
+              <div className="flex gap-6">
+                {/* 왼쪽 */}
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <p className="text-sm font-bold text-zinc-800">💰 현재가</p>
+                    <p className="text-sm text-zinc-700">$44.35 (▲ 4.40%)</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-zinc-800">
+                      📊 매수매력도
+                    </p>
+                    <p className="text-sm text-zinc-700">76 / 100</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-zinc-800">
+                      📈 50일선 대비
+                    </p>
+                    <p className="text-sm text-zinc-700">+24.38%</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-zinc-800">
+                      👨‍💼 애널리스트 매수 비율
+                    </p>
+                    <p className="text-sm text-zinc-700">79% (19명 커버리지)</p>
+                  </div>
+                </div>
+
+                {/* 오른쪽 */}
+                <div className="flex-1 space-y-4">
+                  <div>
+                    <p className="text-sm font-bold text-zinc-800">
+                      🎯 매수구간
+                    </p>
+                    <p className="text-sm text-zinc-700">BUY</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-zinc-800">📉 RSI</p>
+                    <p className="text-sm text-zinc-700">
+                      64.3 (과매수 주의 🟡)
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-zinc-800">
+                      📈 200일선 대비
+                    </p>
+                    <p className="text-sm text-zinc-700">+111.12%</p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-zinc-400 italic mt-5">
+                투자 판단은 본인 책임입니다.
               </p>
             </div>
-
-            {/* Grouping Area */}
-            <div className="space-y-6">
-              <div>
-                <span className="text-[11px] font-black text-zinc-400 tracking-widest uppercase mb-3 block">
-                  Grouping Settings
-                </span>
-                <div className="flex gap-2">
-                  <div className="px-4 py-2 bg-white border border-zinc-200 rounded-full text-xs font-bold text-zinc-600 shadow-sm">
-                    모델 (MODEL)
-                  </div>
-                  <div className="px-4 py-2 bg-white border border-zinc-200 rounded-full text-xs font-bold text-zinc-600 shadow-sm">
-                    서비스 (SERVICE_TYPE)
-                  </div>
-                </div>
-              </div>
-
-              {/* Metrics Area */}
-              <div>
-                <span className="text-[11px] font-black text-zinc-400 tracking-widest uppercase mb-3 block">
-                  Analysis Metrics
-                </span>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-sm font-bold text-zinc-800">
-                        토큰수
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-zinc-400 bg-white px-2 py-0.5 rounded border border-zinc-100">
-                        합계
-                      </span>
-                      <span className="text-sm font-black text-blue-600">
-                        {">= 815"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Decoration Bubble */}
-            <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-blue-600/5 rounded-full blur-3xl" />
           </motion.div>
         </div>
       </div>
@@ -182,28 +198,28 @@ const FeatureSection = () => (
         {...fadeInUp(0)}
         className="text-3xl md:text-4xl font-bold tracking-tight text-center text-zinc-950 mb-20"
       >
-        데이터 활용의 새로운 기준
+        퀀트 투자의 새로운 기준
       </motion.h2>
       <div className="grid md:grid-cols-3 gap-8">
         {[
           {
-            icon: Database,
-            title: "모든 데이터의 연결",
-            desc: "복잡한 설정 없이 클릭 몇 번으로 사내의 모든 데이터를 즉시 불러옵니다.",
+            icon: BarChart3,
+            title: "기술적 분석 자동화",
+            desc: "20일·50일·200일 이동평균, RSI, 골든크로스를 실시간으로 자동 계산합니다.",
             color: "text-blue-600",
             bg: "bg-blue-50",
           },
           {
-            icon: Zap,
-            title: "실시간 데이터 확인",
-            desc: "수동 작업 없이도 항상 최신 상태의 데이터를 실시간으로 모니터링하세요.",
+            icon: TrendingUp,
+            title: "애널리스트 집계",
+            desc: "월스트리트 애널리스트 매수 비율과 커버리지 수를 종합해 신뢰도 높은 점수를 산출합니다.",
             color: "text-zinc-900",
             bg: "bg-zinc-100",
           },
           {
-            icon: BarChart3,
-            title: "직관적인 시각화 도구",
-            desc: "복잡한 수치들을 한눈에 이해할 수 있는 아름다운 차트로 변환합니다.",
+            icon: Zap,
+            title: "실시간 Slack 알림",
+            desc: "매수매력도가 기준점을 넘으면 Slack으로 즉시 알림을 보내 매수 타이밍을 놓치지 않습니다.",
             color: "text-white",
             bg: "bg-zinc-900",
           },
@@ -236,9 +252,9 @@ const BottomCtaSection = () => (
     <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
       <motion.div {...fadeInUp(0)}>
         <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
-          지금 바로 데이터의
+          지금 바로 관심 종목의
           <br />
-          진짜 가치를 찾아보세요.
+          매수 타이밍을 잡아보세요.
         </h2>
         <div className="mt-12 flex items-center justify-center gap-4">
           <Button
@@ -255,6 +271,157 @@ const BottomCtaSection = () => (
   </section>
 );
 
+const DashboardGuideSection = () => (
+  <section className="py-24 bg-white font-sans">
+    <div className="max-w-7xl mx-auto px-6">
+      <div className="grid lg:grid-cols-2 gap-16 items-start">
+        {/* 왼쪽: 토스 스타일 설명 */}
+        <motion.div className="lg:sticky lg:top-24">
+          <span className="text-blue-600 font-bold text-sm tracking-widest uppercase bg-blue-50 px-3 py-1 rounded-full">
+            How it works
+          </span>
+          <h2 className="mt-6 text-4xl font-black tracking-tight text-zinc-950 leading-tight">
+            3단계로 완성하는
+            <br />
+            나만의 주식 대시보드
+          </h2>
+          <p className="mt-6 text-lg text-zinc-500 font-medium leading-relaxed">
+            티커 입력 → 지표 선택 → 저장. 복잡한 설정 없이 클릭 몇 번으로 실시간
+            분석 환경을 만들 수 있습니다.
+          </p>
+          <div className="mt-10 space-y-6">
+            {[
+              {
+                step: "01",
+                title: "종목 등록",
+                desc: "티커 코드를 입력하면 자동으로 실시간 데이터 수집을 시작합니다.",
+              },
+              {
+                step: "02",
+                title: "지표 선택",
+                desc: "현재가, RSI, 이동평균, 매수매력도 등 원하는 지표를 골라 테이블을 구성합니다.",
+              },
+              {
+                step: "03",
+                title: "실시간 확인",
+                desc: "저장 즉시 대시보드가 활성화되고 Slack 알림도 자동으로 연동됩니다.",
+              },
+            ].map((item) => (
+              <div key={item.step} className="flex gap-5 items-start">
+                <span className="text-[13px] font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg shrink-0 mt-0.5">
+                  {item.step}
+                </span>
+                <div>
+                  <h4 className="font-bold text-zinc-900">{item.title}</h4>
+                  <p className="text-sm text-zinc-500 mt-0.5">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* 오른쪽: 하나의 보더 프레임으로 정돈한 대시보드 생성 폼 목업 */}
+        <motion.div className="bg-white rounded-[32px] p-6 shadow-2xl border border-zinc-100">
+          <div className="p-6 space-y-8">
+            {/* 3. 그룹 항목 섹션 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-blue-600 font-extrabold text-sm">
+                <TrendingUp className="w-4 h-4" />
+                <span>그룹 항목 (세로 행)</span>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { ticker: "RKLB", name: "로켓랩" },
+                  { ticker: "PL", name: "플래닛랩스" },
+                  { ticker: "ASTS", name: "AST스페이스모바일" },
+                ].map((g, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between px-4 py-3 bg-zinc-50 rounded-xl"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-[11px] font-black text-blue-500 font-mono w-4">
+                        {i + 1}
+                      </span>
+                      <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded font-mono">
+                        {g.ticker}
+                      </span>
+                      <span className="text-xs font-semibold text-zinc-700">
+                        {g.name}
+                      </span>
+                    </div>
+                    <button className="w-4 h-4 text-zinc-400 hover:text-zinc-600 transition-colors cursor-pointer text-sm font-medium">
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <div className="flex gap-2 mt-3">
+                  <div className="flex-[2] h-10 bg-zinc-50 rounded-xl flex items-center px-3">
+                    <span className="text-xs text-zinc-400 font-mono font-medium">
+                      예: IONQ, GOOG
+                    </span>
+                  </div>
+                  <div className="flex-1 h-10 bg-zinc-50 rounded-xl flex items-center px-3">
+                    <span className="text-xs text-zinc-400 font-medium">
+                      별칭
+                    </span>
+                  </div>
+                  <button className="h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center transition-colors cursor-pointer">
+                    추가
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 4. 집계 항목 섹션 */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-blue-600 font-extrabold text-sm">
+                <BarChart3 className="w-4 h-4" />
+                <span>집계 항목 (가로 열)</span>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { label: "현재가($)", col: "price" },
+                  { label: "매수매력도", col: "purchaseScore" },
+                  { label: "50일 이동평균", col: "ma50" },
+                  { label: "RSI", col: "rsi" },
+                ].map((m, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between px-4 py-3 bg-zinc-50 rounded-xl"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-[11px] font-black text-blue-500 w-4">
+                        {i + 1}
+                      </span>
+                      <span className="text-xs font-semibold text-zinc-700">
+                        {m.label}
+                      </span>
+                    </div>
+                    <button className="w-4 h-4 text-zinc-400 hover:text-zinc-600 transition-colors cursor-pointer text-sm font-medium">
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <div className="flex gap-2 mt-3">
+                  <div className="flex-1 h-10 bg-zinc-50 rounded-xl flex items-center px-3">
+                    <span className="text-xs text-zinc-400 font-medium">
+                      컬럼 선택
+                    </span>
+                  </div>
+                  <button className="h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl flex items-center transition-colors cursor-pointer">
+                    추가
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  </section>
+);
+
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white text-zinc-900 font-sans selection:bg-blue-100 tracking-tight">
@@ -262,6 +429,7 @@ export default function LandingPage() {
         <HeroSection />
         <PreviewSection />
         <FeatureSection />
+        <DashboardGuideSection />
         <BottomCtaSection />
       </main>
     </div>

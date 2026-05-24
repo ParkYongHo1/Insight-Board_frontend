@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import ProjectHeader from "@/widgets/layouts/header/ui/project-header";
+import Header from "@/widgets/layouts/header/ui/header";
 
 export const metadata: Metadata = {
   title: "Insight Board",
@@ -11,9 +11,9 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <>
-      <ProjectHeader />
+    <div className="flex flex-col min-h-screen bg-white text-zinc-900">
+      <Header />
       <main className="flex-1 flex flex-col">{children}</main>
-    </>
+    </div>
   );
 }
