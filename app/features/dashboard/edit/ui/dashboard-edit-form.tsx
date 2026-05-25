@@ -8,11 +8,12 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { getDashboardDetail } from "../../api";
 import { useDashboardEdit } from "../hooks/use-dashboard-edit";
-import { DashboardHeader } from "../../ui/dashboard-header";
 import { DashboardBasicInfo } from "../../ui/dashboard-basic-info";
 import { DashboardGroupSection } from "../../ui/dashboard-group-section";
 import { DashboardMetricSection } from "../../ui/dashboard-metric-section";
 import { DashboardPreview } from "../../ui/dashboard-preview";
+import useUserStore from "@/app/store/session";
+import { isDemoAccount } from "@/app/shared/utils/is-demo";
 
 interface BackendGroupItem {
   id?: string;
@@ -33,6 +34,8 @@ interface BackendMetricItem {
 export const DashboardEditForm = () => {
   const router = useRouter();
   const { id } = useParams();
+  const user = useUserStore((state) => state.user);
+  const isDemo = isDemoAccount(user?.email);
 
   const { data: dashboard, isLoading } = useQuery({
     queryKey: ["dashboard", id],
@@ -73,7 +76,6 @@ export const DashboardEditForm = () => {
 
   useEffect(() => {
     if (!dashboard) return;
-
     setTitle(dashboard.title);
     setDesc(dashboard.desc || "");
 
@@ -117,16 +119,24 @@ export const DashboardEditForm = () => {
   return (
     <div className="w-full min-h-screen bg-white font-sans text-zinc-900 pb-24">
       <div className="w-full max-w-300 mx-auto py-8 px-4 md:py-12 md:px-6 flex flex-col gap-8">
-        <DashboardHeader onSave={handleSave} isEdit={true} isAdmin={true} />
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-extrabold text-zinc-900">
+            대시보드 수정
+          </h1>
+          {isDemo && (
+            <p className="text-sm text-amber-600 bg-amber-50 border border-amber-200 px-4 py-2 rounded-xl font-medium w-fit">
+              데모 계정은 조회만 가능합니다.
+            </p>
+          )}
+        </div>
 
         <div className="flex flex-col gap-8">
           <DashboardBasicInfo
             title={title}
             desc={desc}
-            onTitleChange={setTitle}
-            onDescChange={setDesc}
+            onTitleChange={isDemo ? () => {} : setTitle}
+            onDescChange={isDemo ? () => {} : setDesc}
           />
-
           <DashboardGroupSection
             groups={groups}
             newGroup={newGroup}
@@ -137,7 +147,6 @@ export const DashboardEditForm = () => {
             }
             onDragEnd={onDragEnd}
           />
-
           <DashboardMetricSection
             metrics={metrics}
             newMetric={newMetric}
@@ -149,7 +158,6 @@ export const DashboardEditForm = () => {
             }
             onDragEnd={onDragEnd}
           />
-
           <DashboardPreview groups={groups} metrics={metrics} />
         </div>
 
@@ -159,20 +167,21 @@ export const DashboardEditForm = () => {
             onClick={() => router.back()}
             className="h-12 px-8 bg-[#f2f4f6] hover:bg-[#e5e8eb] text-[#4e5968] font-bold rounded-2xl cursor-pointer"
           >
-            취소
+            {isDemo ? "돌아가기" : "취소"}
           </Button>
-
-          <Button
-            onClick={handleSave}
-            disabled={isPending}
-            className="h-12 px-10 bg-[#3182f6] hover:bg-[#1b64da] text-white font-bold rounded-2xl cursor-pointer min-w-40 shadow-[0_8px_16px_rgba(49,130,246,0.2)]"
-          >
-            {isPending ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              "수정사항 저장"
-            )}
-          </Button>
+          {!isDemo && (
+            <Button
+              onClick={handleSave}
+              disabled={isPending}
+              className="h-12 px-10 bg-[#3182f6] hover:bg-[#1b64da] text-white font-bold rounded-2xl cursor-pointer min-w-40 shadow-[0_8px_16px_rgba(49,130,246,0.2)]"
+            >
+              {isPending ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                "수정사항 저장"
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </div>

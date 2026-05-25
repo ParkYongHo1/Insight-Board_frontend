@@ -1,20 +1,29 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useDashboardCreate } from "../hooks/use-dashboard-create";
-import { DashboardHeader } from "../../ui/dashboard-header";
 import { DashboardBasicInfo } from "../../ui/dashboard-basic-info";
 import { DashboardGroupSection } from "../../ui/dashboard-group-section";
 import { DashboardMetricSection } from "../../ui/dashboard-metric-section";
 import { DashboardPreview } from "../../ui/dashboard-preview";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import useUserStore from "@/app/store/session";
+import { isDemoAccount } from "@/app/shared/utils/is-demo";
 
 export const DashboardCreateForm = () => {
   const router = useRouter();
+  const user = useUserStore((state) => state.user);
 
-  // 🚀 1. Number(projectId) 제거: 훅 스펙에 맞춰 callbacks만 깔끔하게 전달합니다.
+  useEffect(() => {
+    if (isDemoAccount(user?.email)) {
+      toast.error("데모 계정은 사용할 수 없는 기능입니다.");
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
   const {
     title,
     setTitle,
@@ -39,14 +48,12 @@ export const DashboardCreateForm = () => {
       toast.success("대시보드가 성공적으로 생성되었습니다!", {
         position: "top-center",
       });
-      router.push("/dashboard"); // 단수형 경로 매핑 유지
+      router.push("/dashboard");
     },
     onError: (error) => {
       toast.error(
         error.response?.data?.message || "대시보드 생성에 실패했습니다.",
-        {
-          position: "top-center",
-        },
+        { position: "top-center" },
       );
     },
   });
@@ -54,8 +61,14 @@ export const DashboardCreateForm = () => {
   return (
     <div className="w-full min-h-screen bg-white font-sans text-zinc-900 pb-24">
       <div className="w-full max-w-300 mx-auto py-8 px-4 md:py-12 md:px-6 flex flex-col gap-8">
-        {/* 상시 생성 모드이므로 isEdit={false} 처리 */}
-        <DashboardHeader onSave={handleSave} isEdit={false} isAdmin={true} />
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-extrabold text-zinc-900">
+            새 대시보드 생성
+          </h1>
+          <p className="text-sm text-zinc-400">
+            종목과 지표를 설정하고 저장하세요.
+          </p>
+        </div>
 
         <div className="flex flex-col gap-8">
           <DashboardBasicInfo
@@ -64,7 +77,6 @@ export const DashboardCreateForm = () => {
             onTitleChange={setTitle}
             onDescChange={setDesc}
           />
-
           <DashboardGroupSection
             groups={groups}
             newGroup={newGroup}
@@ -73,7 +85,6 @@ export const DashboardCreateForm = () => {
             onRemove={(id) => setGroups(groups.filter((g) => g.id !== id))}
             onDragEnd={onDragEnd}
           />
-
           <DashboardMetricSection
             metrics={metrics}
             newMetric={newMetric}
@@ -83,11 +94,9 @@ export const DashboardCreateForm = () => {
             onRemove={(id) => setMetrics(metrics.filter((m) => m.id !== id))}
             onDragEnd={onDragEnd}
           />
-
           <DashboardPreview groups={groups} metrics={metrics} />
         </div>
 
-        {/* 🚀 2. 하단 액션 제어 버튼 컨트롤러 스타일을 다른 폼과 통일 (토스풍 라운드/컬러 피팅) */}
         <div className="flex items-center justify-center gap-4 pt-4">
           <Button
             type="button"
@@ -97,7 +106,6 @@ export const DashboardCreateForm = () => {
           >
             취소
           </Button>
-
           <Button
             onClick={handleSave}
             disabled={isPending}
