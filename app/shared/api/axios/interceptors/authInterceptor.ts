@@ -16,6 +16,7 @@ authClient.interceptors.request.use(
   },
   (error) => Promise.reject(error),
 );
+
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (value: unknown) => void;
@@ -66,15 +67,12 @@ authClient.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError);
         useUserStore.getState().clearSession();
-
-        if (typeof window !== "undefined") {
-          window.location.href = "/sign-in";
-        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
+
     const errorData = error.response?.data || {
       status: error.response?.status || 500,
       message: error.message || "서버 연결에 실패했습니다.",
